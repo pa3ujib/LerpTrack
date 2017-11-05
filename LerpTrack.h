@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _TRACK_H_
-#define _TRACK_H_
+#ifndef _LERP_TRACK_H_
+#define _LERP_TRACK_H_
 
 #include <glm\glm.hpp>
 
@@ -11,40 +11,34 @@ class LerpTrack
 {
 // Attributes : --------------------------------------------------------------
 protected:
-    std::vector<glm::vec4>  mPoints;    // array of traectory points ( x, y, z, velocity )
+    std::vector<glm::vec4>  mPoints;    // массив точек движения в формате (x, y, z, velocity)
 
-    glm::vec4   mCurrPoint;             // current start point
-    glm::vec4   mNextPoint;             // next point to finish
+    glm::vec4   mCurrPoint;             // текущая начальная точка
+    glm::vec4   mNextPoint;             // текущая конечная точка
 
-    glm::vec3   mDirection;             // direction of movement
-    glm::vec3   mPosition;              // current position ( between start and finish )
-    unsigned    mIndex;                 // index of next point in array
-    bool        mRepeat;                // repeat traectory flag
+    glm::vec3   mDirection;             // единичный вектор направления движения
+    glm::vec3   mPosition;              // текущая позиция (где-то между начальной и конечной)
+    unsigned    mIndex;                 // текущий индекс конечной точки в массиве
+    bool        mRepeat;                // флаг повтора траектории
 
 // Methods :    --------------------------------------------------------------
 public:
-    // empty constructor
+    // пустой конструктор
     LerpTrack ( );
-    // constructor with parameters
-    // @param   _points
-    //          array of traectory points
-    // @param   _repeat
-    //          cycle flag
+    // конструктор задающий массив точек и флаг повтора
     LerpTrack ( std::vector<glm::vec4>& _points, bool _repeat = true );
 
-    // set up traectory points
+    // задаёт массив точек для траектории
     void        setPoints ( std::vector<glm::vec4>& _points );
-    // returns current position
+    // возвращает текущее положение
     glm::vec3   getPosition ( );
-    // rewind traectory to it's start
+    // сброс траектории в самое начало
     void        reset ( );
-    // set up repeat flag
+    // установка флага повтора
     void        setRepeat ( bool _repeat );
-    // traectory updating
-    // @param   _deltaTime
-    //          time elapsed from last update
+    // метод обновления траектории
     void        update ( double _deltaTime );
 
 };
 
-#endif  /*_TRACK_H_*/
+#endif  /*_LERP_TRACK_H_*/

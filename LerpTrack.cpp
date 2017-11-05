@@ -7,13 +7,10 @@
 // ---------------------------------------------------------------------------
 
 LerpTrack::LerpTrack ( )
-    : mIndex ( 0 )
-    , mRepeat ( false )
+    : mRepeat ( false )
 {
     mPoints = std::vector<glm::vec4> ( );
-    mPosition = glm::vec3 ( 0.0f );
-    mDirection = glm::vec3 ( 0.0f );
-    mCurrPoint = mNextPoint = glm::vec4 ( 0.0f );
+    reset ( );
 }
 
 LerpTrack::LerpTrack ( std::vector<glm::vec4>& _points, bool _repeat )
@@ -37,10 +34,21 @@ glm::vec3 LerpTrack::getPosition ( )
 void LerpTrack::reset ( )
 {
     mIndex = 0;
-    mCurrPoint = mPoints[mIndex++];
-    mNextPoint = mPoints[mIndex];
+    if ( mPoints.size ( ) > 0 )
+    {
+        mCurrPoint = mPoints[mIndex];
+        if ( mPoints.size ( ) > 1 )
+            mNextPoint = mPoints[++mIndex];
+        else
+            mNextPoint = mCurrPoint;
+    }
+    else
+    {
+        mCurrPoint = glm::vec4 ( 0.0f );
+        mNextPoint = glm::vec4 ( 0.0f );
+    }
     mDirection = glm::normalize ( mNextPoint - mCurrPoint );
-    mPosition  = mCurrPoint;
+    mPosition = mCurrPoint;
 }
 
 void LerpTrack::setRepeat ( bool _repeat )
@@ -50,37 +58,35 @@ void LerpTrack::setRepeat ( bool _repeat )
 
 void LerpTrack::update ( double _deltaTime )
 {
-    // calculate next shift vector
-    glm::vec3 delta = ( float ) _deltaTime * mCurrPoint.w * mDirection;
-    // get the delta position change
-    glm::vec3 deltaPosition = mPosition + delta;
-    // save machine cycles if no moving
+    // получаем следующее положение
+    glm::vec3 deltaPosition = mPosition + ( float ) _deltaTime * mCurrPoint.w * mDirection;
+    // если сдвига не происходит, то ничего не делаем
     if ( mPosition == deltaPosition ) return;
 
-    // find initial distance
+    // определим расстояние, которое необходимо было пройти
     float distance1 = glm::distance ( glm::vec3 ( mNextPoint ), glm::vec3 ( mCurrPoint ) );
-    // find distance from new position
+    // определим расстояние, которое получится на этом шаге
     float distance2 = glm::distance ( glm::vec3 ( mCurrPoint ), deltaPosition );
         
     if ( distance1 > distance2 )
-        // whether initial is bigger
-        mPosition += delta;
+        // если необходимое расстояние всё ещё меньше уже пройденного расстояния
+        mPosition = deltaPosition;
     else
-        // or not
+        // если пройденное расстояние равно или превысило необходимое
     {
-        // next point will be current
+        // переносим начальную точку в конечную
         mCurrPoint = mNextPoint;
-        // translate position
+        //  и устанавливаем туда текущее положение
         mPosition  = mCurrPoint;
 
-        // get next point via index
+        // выбираем следующую конечную точку с помощью индекса
         if ( mPoints.size ( ) > ( mIndex + 1 ) )
             mIndex += 1;
         else
             if ( mRepeat ) mIndex = 0;
         mNextPoint = mPoints[mIndex];
         
-        // calculate new direction
+        // устанавливаем новое направление
         mDirection = glm::normalize ( mNextPoint - mCurrPoint );
     }
 }
