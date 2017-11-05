@@ -58,35 +58,35 @@ void LerpTrack::setRepeat ( bool _repeat )
 
 void LerpTrack::update ( double _deltaTime )
 {
-    // получаем следующее положение
+    // get next delta position
     glm::vec3 deltaPosition = mPosition + ( float ) _deltaTime * mCurrPoint.w * mDirection;
-    // если сдвига не происходит, то ничего не делаем
+    // nothing to do with no movement
     if ( mPosition == deltaPosition ) return;
 
-    // определим расстояние, которое необходимо было пройти
+    // find initial distance
     float distance1 = glm::distance ( glm::vec3 ( mNextPoint ), glm::vec3 ( mCurrPoint ) );
-    // определим расстояние, которое получится на этом шаге
+    // find distance from new position
     float distance2 = glm::distance ( glm::vec3 ( mCurrPoint ), deltaPosition );
         
     if ( distance1 > distance2 )
-        // если необходимое расстояние всё ещё меньше уже пройденного расстояния
+        // whether initial is bigger
         mPosition = deltaPosition;
     else
-        // если пройденное расстояние равно или превысило необходимое
+        // or not
     {
-        // переносим начальную точку в конечную
+        // next point will be current
         mCurrPoint = mNextPoint;
-        //  и устанавливаем туда текущее положение
+        // translate position
         mPosition  = mCurrPoint;
 
-        // выбираем следующую конечную точку с помощью индекса
+        // get next point via index
         if ( mPoints.size ( ) > ( mIndex + 1 ) )
             mIndex += 1;
         else
             if ( mRepeat ) mIndex = 0;
         mNextPoint = mPoints[mIndex];
         
-        // устанавливаем новое направление
+        // calculate new direction
         mDirection = glm::normalize ( mNextPoint - mCurrPoint );
     }
 }
