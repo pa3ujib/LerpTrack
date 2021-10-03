@@ -24,7 +24,7 @@ protected:
 // Methods :    --------------------------------------------------------------
 public:
     // default contructor
-    LerpTrack ( );
+    LerpTrack ();
     // constructor with parameters
     // @param   _points
     //          array of traectory points
@@ -35,11 +35,11 @@ public:
     // set up traectory points
     void        setPoints ( std::vector<glm::vec4>& _points );
     // returns current position
-    glm::vec3   getPosition ( );
+    glm::vec3   getPosition ();
     // returns next position
     glm::vec3   getNextPosition ();
     // rewind traectory to it's start
-    void        reset ( );
+    void        reset ();
     // set up repeat flag
     void        setRepeat ( bool _repeat );
     // traectory updating
