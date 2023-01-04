@@ -11,7 +11,7 @@ simple C++ class to move along traectory which set up with array of four-element
   2. Install the array of points. You may do it with two methods :
      - via constructor
      ```
-     camera_track = new LerpTrack ( points, false );
+     LerpTrack *camera_track = new LerpTrack ( points, false );
      ```
      - via separate methods
      ```
